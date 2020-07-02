@@ -5,16 +5,16 @@ package minzhen.you.simFormSubmit;
  *
  */
 public class App {
-	private static int startPId = 38917;
-	private static int startSourseId = 38857;
-	private static int[] number = { 7, 13, 1, 11, 6, 5, 3, 4, 5, 5 };
+	private static int startPId = 44437;
+	private static int startSourseId = 44429;
+	private static int[] number = {8};
 
 	public static void main(String[] args) {
 		Submit submit = new Submit();
 		try {
 			for (int i = 0; i < number.length; i++) {
 				for (int j = 0; j < number[i]; j++) {
-					submit.htmlSubmit(startPId, startSourseId++);
+					submit.htmlSubmit(startPId, startSourseId++,"q35f5t4ha35z40ux5htanu1p","login_log_id=2fc61908-4aba-4950-9e8a-19eec8c8d9ec");
 				}
 				startPId++;
 			}

@@ -5,7 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,15 +25,19 @@ import com.gargoylesoftware.htmlunit.util.Cookie;
 
 public class Submit {
 	private List<String> answerList = new ArrayList<>();
+	private Map<String, String> answerMap = new HashMap<>();
 	
-	public void htmlSubmit(int pId,int courseId) throws Exception {
+	public void htmlSubmit(int pId,int courseId,String cookie,String loginId) throws Exception {
 		WebClient webClient = new WebClient(BrowserVersion.CHROME); // 实例化Web客户端
 		webClient.getCookieManager().setCookiesEnabled(true);
 		webClient.getOptions().setJavaScriptEnabled(false);// 开启js解析。对于变态网页，这个是必须的
 		webClient.getOptions().setCssEnabled(false);// 开启css解析。对于变态网页，这个是必须的。
 		webClient.getCookieManager()
-				.addCookie(new Cookie("sqpx.91huayi.com", "ASP.NET_SessionId", "w5cekan0rpb1hskg2kzdqeao"));
+				.addCookie(new Cookie("sqpx.91huayi.com", "ASP.NET_SessionId", cookie));
+		webClient.getCookieManager().addCookie(new Cookie("sqpx.91huayi.com","login_log_id",loginId));
 
+//		autoExam(webClient);
+		
 		try {
 			String url = "http://sqpx.91huayi.com/StudyCenter/Test.aspx?test=y&biaoshi=xc&courseid="+courseId+"&pid="+pId;
 			System.out.println(url);
@@ -42,6 +48,8 @@ public class Submit {
 			submit(page2.asXml());
 			
 			reAnswer(form);
+			
+//			autoExam(webClient);
 		} catch (FailingHttpStatusCodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -54,6 +62,13 @@ public class Submit {
 		} finally {
 			webClient.close(); // 关闭客户端，释放内存
 		}
+	}
+
+	private void autoExam(WebClient webClient) throws Exception {
+		String examUrl = "https://sqpx.91huayi.com/StudyCenter/examlilun.aspx?biaoshi=xd";
+		HtmlPage page = webClient.getPage(examUrl);
+		HtmlForm htmlForm = page.getFormByName("form1");
+		return;
 	}
 
 	private void reAnswer(HtmlForm form) throws IOException {
@@ -69,7 +84,6 @@ public class Submit {
 
 	public void submit(String html) throws IOException {
 		Document document = Jsoup.parse(html);
-		// System.out.println(document.toString());
 		Elements elements = document.getElementsByClass("tooltip");
 		try (FileOutputStream fileOutputStream = new FileOutputStream(new File("D://答案.doc"), true)) {
 
